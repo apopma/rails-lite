@@ -34,9 +34,10 @@ module Phase5
     # should return
     # { "user" => { "address" => { "street" => "main", "zip" => "89436" } } }
     def parse_www_encoded_form(www_encoded_form)
-      # ASK: how would this be done recursively?
       query_string = URI.decode_www_form(www_encoded_form)
       query_hash = {}
+
+      p query_string
 
       query_string.each do |query|
         parsed_key = parse_key(query.first)
@@ -44,9 +45,7 @@ module Phase5
 
         parsed_key.each_with_index do |nested_key, idx|
           if current_hash.key?(nested_key)
-            # always false for the first query
-            # needs to be current_hash (referencing query_hash) for >1 queries
-            # so that query_hash can be updated with the proper nesting
+            # we need to go deeper, always false on first iteration
             current_hash = current_hash[nested_key]
           else
             if idx == parsed_key.length - 1
@@ -60,7 +59,7 @@ module Phase5
           end
         end
 
-        @params.merge!(query_hash)
+        @params.merge!(query_hash) #why doesn't Hash#merge work?
       end
     end
 
