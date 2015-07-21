@@ -1,4 +1,5 @@
 require 'uri'
+require 'byebug'
 
 module Phase5
   class Params
@@ -33,14 +34,40 @@ module Phase5
     # should return
     # { "user" => { "address" => { "street" => "main", "zip" => "89436" } } }
     def parse_www_encoded_form(www_encoded_form)
-      URI.decode_www_form(www_encoded_form).each do |query|
-        @params[query.first] = query.last
+      # ASK: how would this be done recursively?
+      query_string = URI.decode_www_form(www_encoded_form)
+      query_hash = {}
+
+      query_string.each do |query|
+        parsed_key = parse_key(query.first)
+        current_hash = query_hash # same object in memory to begin with
+
+        parsed_key.each_with_index do |nested_key, idx|
+          if current_hash.key?(nested_key)
+            # always false for the first query
+            # needs to be current_hash (referencing query_hash) for >1 queries
+            # so that query_hash can be updated with the proper nesting
+            current_hash = current_hash[nested_key]
+          else
+            if idx == parsed_key.length - 1
+              # deepest level, assign the value
+              current_hash[nested_key] = query.last
+            else
+              # not done yet, nest a new hash
+              current_hash[nested_key] = {} # actually updating query_hash
+              current_hash = current_hash[nested_key] # point to new blank hash
+            end
+          end
+        end
+
+        @params.merge!(query_hash)
       end
     end
 
     # this should return an array
     # user[address][street] should return ['user', 'address', 'street']
     def parse_key(key)
+      key.split(/\]\[|\[|\]/)
     end
   end
 end
