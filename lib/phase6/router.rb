@@ -10,9 +10,9 @@ module Phase6
     end
 
     # checks if pattern matches path and method matches request method
+    # NB: req.request_method does not actually return a capitalized string
     def matches?(req)
-      req.request_method.downcase.to_sym == http_method &&
-      pattern =~ req.path
+      req.request_method == http_method && pattern =~ req.path
     end
 
     # use pattern to pull out route params (save for later?)
