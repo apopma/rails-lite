@@ -2,6 +2,7 @@ module Phase6
   class Route
     attr_reader :pattern, :http_method, :controller_class, :action_name
 
+    # NB: given regexes in the router are dumb and do not match trailing /
     def initialize(pattern, http_method, controller_class, action_name)
       @pattern = pattern
       @http_method = http_method
@@ -10,16 +11,23 @@ module Phase6
     end
 
     # checks if pattern matches path and method matches request method
-    # NB: req.request_method does not actually return a capitalized string
+    # NB: req.request_method is sometimes a symbol and sometimes a string (?!)
     def matches?(req)
-      req.request_method == http_method && pattern =~ req.path
+      req.request_method.downcase.to_sym == http_method && pattern =~ req.path
     end
 
     # use pattern to pull out route params (save for later?)
     # instantiate controller and call controller action
-    # controller expects a blank hash for its route_params (eventually)
+    # controller expects a params hash with which to create dynamic routes
     def run(req, res)
-      controller_class.new(req, res, {}).invoke_action(action_name)
+      match_data = pattern.match req.path
+      route_params = {}
+
+      match_data.names.each do |match_name|
+        route_params[match_name] = match_data[match_name]
+      end
+
+      controller_class.new(req, res, route_params).invoke_action(action_name)
     end
   end
 
@@ -38,6 +46,9 @@ module Phase6
     # evaluate the proc in the context of the instance
     # for syntactic sugar :)
     def draw(&proc)
+      # blocks shaped like:
+      # method pattern controller_class action_name
+      instance_eval(&proc)
     end
 
     # make each of these methods that, when called, add route
