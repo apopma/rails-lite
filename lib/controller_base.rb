@@ -6,6 +6,7 @@ require 'byebug'
 
 require_relative 'session'
 require_relative 'params'
+require_relative 'flash'
 
 class ControllerBase
   attr_reader :req, :res, :params
@@ -21,6 +22,11 @@ class ControllerBase
   # method exposing a `Session` object
   def session
     @session ||= Session.new(req)
+  end
+
+  # exposes a 'Flash' object in the same way
+  def flash
+    @flash ||= Flash.new(req)
   end
 
   # use this with the router to call action_name (:index, :show, :create...)
