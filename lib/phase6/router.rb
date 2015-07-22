@@ -17,7 +17,9 @@ module Phase6
 
     # use pattern to pull out route params (save for later?)
     # instantiate controller and call controller action
+    # controller expects a blank hash for its route_params (eventually)
     def run(req, res)
+      controller_class.new(req, res, {}).invoke_action(action_name)
     end
   end
 
@@ -38,8 +40,7 @@ module Phase6
     def draw(&proc)
     end
 
-    # make each of these methods that
-    # when called add route
+    # make each of these methods that, when called, add route
     [:get, :post, :put, :delete].each do |http_method|
       define_method(http_method) do |pattern, controller_class, action_name|
         add_route(pattern, http_method, controller_class, action_name)
@@ -52,7 +53,9 @@ module Phase6
     end
 
     # either throw 404 or call run on a matched route
+    # actually running Route#run on a successful match
     def run(req, res)
+      match(req) ? match(req).run(req, res) : res.status = 404
     end
   end
 end
