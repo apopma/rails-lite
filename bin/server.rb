@@ -69,8 +69,10 @@ class CatsController < ControllerBase
   def create
     @cat = Cat.new(params["cat"])
     if @cat.save
+      flash["notice"] = "Flash-later notice: made a new cat"
       redirect_to("/cats")
     else
+      flash.now["notice"] = "Flash-now notice: something went wrong"
       render :new
     end
   end

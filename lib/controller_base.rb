@@ -50,6 +50,7 @@ class ControllerBase
     @res.body = content
     @already_built_response = true
     session.store_session(res)
+    flash.store(res)
   end
 
   # Populate the response with content.
@@ -62,6 +63,7 @@ class ControllerBase
     @res.reason_phrase = "Redirected"
     @already_built_response = true
     session.store_session(res)
+    flash.store(res)
   end
 
   private # ?
