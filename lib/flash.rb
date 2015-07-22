@@ -19,6 +19,7 @@ class Flash
   end
 
   def now
+    # aliases this hash - flash.now[] calls Hash bracket methods, not Flash
     flash_now
   end
 
