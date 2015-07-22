@@ -33,30 +33,17 @@ class Params
   # { "user" => { "address" => { "street" => "main", "zip" => "89436" } } }
   def parse_www_encoded_form(www_encoded_form)
     query_string = URI.decode_www_form(www_encoded_form)
-    query_hash = {}
 
     query_string.each do |query|
       parsed_key = parse_key(query.first)
-      current_hash = query_hash # same object in memory to begin with
+      current_hash = @params # same object in memory to begin with
 
-      parsed_key.each_with_index do |nested_key, idx|
-        if current_hash.key?(nested_key)
-          # current_hash references query_hash on first iteration
-          # always false for single query, may be true for >1 queries
-          current_hash = current_hash[nested_key]
-        else
-          if idx == parsed_key.length - 1
-            # deepest level, assign the value
-            current_hash[nested_key] = query.last
-          else
-            # not done yet, nest a new hash
-            current_hash[nested_key] = {} # actually updating query_hash
-            current_hash = current_hash[nested_key] # point to new blank hash
-          end
-        end
+      parsed_key[0...-1].each do |nested_key|
+        current_hash[nested_key] ||= {} # actually updating query_hash
+        current_hash = current_hash[nested_key] # point to new blank hash
       end
 
-      @params.merge!(query_hash)
+      current_hash[parsed_key.last] = query.last
     end
   end
 
