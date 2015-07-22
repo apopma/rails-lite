@@ -76,6 +76,8 @@ class CatsController < ControllerBase
   end
 
   def index
+    session["visits"] ||= 0
+    session["visits"] += 1
     @cats = Cat.all
     render :index
   end
