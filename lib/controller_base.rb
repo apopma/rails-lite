@@ -2,6 +2,7 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'active_support/inflector'
 require 'erb'
+require 'byebug'
 
 require_relative 'session'
 require_relative 'params'

@@ -30,6 +30,10 @@ class Cat
     @cat ||= []
   end
 
+  def self.find(name)
+    Cat.all.find { |c| c.name == name }
+  end
+
   def initialize(params = {})
     params ||= {}
     @name, @owner = params["name"], params["owner"]
@@ -80,6 +84,11 @@ class CatsController < ControllerBase
     @cat = Cat.new
     render :new
   end
+
+  def show
+    @cat = Cat.find(params[:name])
+    render :show
+  end
 end
 
 router = Router.new
@@ -87,6 +96,7 @@ router.draw do
   get Regexp.new("^/cats$"), CatsController, :index
   get Regexp.new("^/cats/new$"), CatsController, :new
   post Regexp.new("^/cats$"), CatsController, :create
+  get Regexp.new("^/cats/(?<name>\\w+)$"), CatsController, :show
   get Regexp.new("^/cats/(?<cat_id>\\d+)/statuses$"), StatusesController, :index
 end
 
