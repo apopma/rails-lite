@@ -1,5 +1,4 @@
 require 'uri'
-require 'byebug'
 
 module Phase5
   class Params
