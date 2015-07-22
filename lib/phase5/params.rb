@@ -13,6 +13,7 @@ module Phase5
     def initialize(req, route_params = {})
       @params = {}.merge(route_params)
       parse_www_encoded_form(req.query_string) if req.query_string
+      parse_www_encoded_form(req.body) if req.body
     end
 
     def [](key)
@@ -37,15 +38,14 @@ module Phase5
       query_string = URI.decode_www_form(www_encoded_form)
       query_hash = {}
 
-      p query_string
-
       query_string.each do |query|
         parsed_key = parse_key(query.first)
         current_hash = query_hash # same object in memory to begin with
 
         parsed_key.each_with_index do |nested_key, idx|
           if current_hash.key?(nested_key)
-            # we need to go deeper, always false on first iteration
+            # current_hash references query_hash on first iteration
+            # always false for single query, may be true for >1 queries
             current_hash = current_hash[nested_key]
           else
             if idx == parsed_key.length - 1
@@ -59,7 +59,7 @@ module Phase5
           end
         end
 
-        @params.merge!(query_hash) #why doesn't Hash#merge work?
+        @params.merge!(query_hash)
       end
     end
 
