@@ -15,7 +15,6 @@ class Params
   end
 
   def [](key)
-    # better way to do this? vOv
     @params[key.to_s] || @params[key.to_sym]
   end
 
