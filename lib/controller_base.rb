@@ -3,13 +3,16 @@ require 'active_support/core_ext'
 require 'active_support/inflector'
 require 'erb'
 require 'byebug'
+require 'securerandom'
 
 require_relative 'session'
 require_relative 'params'
 require_relative 'flash'
+class InvalidAuthenticityToken < RuntimeError; end;
+JUST_POST = ['post', 'POST', :post]
 
 class ControllerBase
-  attr_reader :req, :res, :params
+  attr_reader :req, :res, :params, :auth_token
 
   # setup the controller
   def initialize(req, res, route_params = {})
@@ -31,6 +34,7 @@ class ControllerBase
 
   # use this with the router to call action_name (:index, :show, :create...)
   def invoke_action(name)
+    raise InvalidAuthenticityToken unless valid_auth_token?
     self.send(name)
     render(name) unless already_built_response?
   end
@@ -40,6 +44,8 @@ class ControllerBase
   def render(template_name)
     dir_name = self.class.to_s.underscore
     template_file = File.read("views/#{dir_name}/#{template_name}.html.erb")
+    set_auth_token
+
     template = ERB.new(template_file).result(binding) # eval needed later on?
     render_content(template, 'text/html')
   end
@@ -66,9 +72,21 @@ class ControllerBase
     flash.store(res)
   end
 
-  private # ?
+  private
   # Helper method to alias @already_built_response
   def already_built_response?
     @already_built_response
+  end
+
+  def set_auth_token
+    @auth_token = SecureRandom.urlsafe_base64(11)
+    session["auth_token"] = auth_token
+  end
+
+  def valid_auth_token?
+    if JUST_POST.include?(req.request_method)
+      return session["auth_token"] == params["auth_token"]
+    end
+    true
   end
 end
