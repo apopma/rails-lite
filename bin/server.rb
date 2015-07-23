@@ -4,38 +4,15 @@ require 'webrick'
 
 require_relative '../lib/controller_base'
 require_relative '../lib/router'
+require_relative '../lib/db/lib/sql_object'
 
 # http://www.ruby-doc.org/stdlib-2.0/libdoc/webrick/rdoc/WEBrick.html
 # http://www.ruby-doc.org/stdlib-2.0/libdoc/webrick/rdoc/WEBrick/HTTPRequest.html
 # http://www.ruby-doc.org/stdlib-2.0/libdoc/webrick/rdoc/WEBrick/HTTPResponse.html
 # http://www.ruby-doc.org/stdlib-2.0/libdoc/webrick/rdoc/WEBrick/Cookie.html
 
-class Cat
-  attr_accessor :name, :owner
-
-  def self.all
-    @cat ||= []
-  end
-
-  def self.find(name)
-    Cat.all.find { |c| c.name == name }
-  end
-
-  def initialize(params = {})
-    params ||= {}
-    @name, @owner = params["name"], params["owner"]
-  end
-
-  def save
-    return false unless @name.present? && @owner.present?
-
-    Cat.all << self
-    true
-  end
-
-  def inspect
-    { name: name, owner: owner }.inspect
-  end
+class Cat < SQLObject
+  self.finalize!
 end
 
 class CatsController < ControllerBase
@@ -63,7 +40,7 @@ class CatsController < ControllerBase
   end
 
   def show
-    @cat = Cat.find(params[:name])
+    @cat = Cat.find(params[:id])
 
     unless @cat
       @cat = Cat.new
@@ -83,7 +60,6 @@ router.draw do
   get Regexp.new("^/cats/new$"), CatsController, :new
   post Regexp.new("^/cats$"), CatsController, :create
   get Regexp.new("^/cats/(?<name>\\w+)$"), CatsController, :show
-  get Regexp.new("^/cats/(?<cat_id>\\d+)/statuses$"), StatusesController, :index
 end
 
 server = WEBrick::HTTPServer.new(Port: 3000)
