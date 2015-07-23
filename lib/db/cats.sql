@@ -8,30 +8,16 @@ CREATE TABLE cats (
 
 CREATE TABLE humans (
   id INTEGER PRIMARY KEY,
-  fname VARCHAR(255) NOT NULL,
-  lname VARCHAR(255) NOT NULL,
-  house_id INTEGER,
-
-  FOREIGN KEY(house_id) REFERENCES human(id)
-);
-
-CREATE TABLE houses (
-  id INTEGER PRIMARY KEY,
-  address VARCHAR(255) NOT NULL
+  name VARCHAR(255) NOT NULL
 );
 
 INSERT INTO
-  houses (id, address)
+  humans (id, name)
 VALUES
-  (1, "26th and Guerrero"), (2, "Dolores and Market");
-
-INSERT INTO
-  humans (id, fname, lname, house_id)
-VALUES
-  (1, "Devon", "Watts", 1),
-  (2, "Matt", "Rubens", 1),
-  (3, "Ned", "Ruggeri", 2),
-  (4, "Catless", "Human", NULL);
+  (1, "Devon Watts"),
+  (2, "Matt Mattson"),
+  (3, "Ned Ruggeri"),
+  (4, "Catless Human");
 
 INSERT INTO
   cats (id, name, owner_id)

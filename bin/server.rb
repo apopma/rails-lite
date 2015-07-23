@@ -12,11 +12,22 @@ require_relative '../lib/db/lib/sql_object'
 # http://www.ruby-doc.org/stdlib-2.0/libdoc/webrick/rdoc/WEBrick/Cookie.html
 
 class Cat < SQLObject
+  belongs_to(
+    :owner, class_name: "Human",
+    primary_key: :id, foreign_key: :owner_id
+  )
+  self.finalize!
+end
+
+class Human < SQLObject
+  has_many(:cats)
+  self.table_name = "humans"
   self.finalize!
 end
 
 class CatsController < ControllerBase
   def create
+    byebug
     @cat = Cat.new(params["cat"])
     if @cat.save
       flash["notice"] = "Flash-later notice: made a new cat"
@@ -40,12 +51,12 @@ class CatsController < ControllerBase
   end
 
   def show
-    @cat = Cat.find(params[:id])
+    @cat = Cat.find(params[:cat_id].to_i)
 
     unless @cat
       @cat = Cat.new
       @cat.name = "nobody"
-      @cat.owner = "no one"
+      @cat.owner_id = 0
     end
 
     render :show
@@ -59,7 +70,7 @@ router.draw do
   get Regexp.new("^/cats$"), CatsController, :index
   get Regexp.new("^/cats/new$"), CatsController, :new
   post Regexp.new("^/cats$"), CatsController, :create
-  get Regexp.new("^/cats/(?<name>\\w+)$"), CatsController, :show
+  get Regexp.new("^/cats/(?<cat_id>\\d+)$"), CatsController, :show
 end
 
 server = WEBrick::HTTPServer.new(Port: 3000)
