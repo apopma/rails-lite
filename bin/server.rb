@@ -27,7 +27,6 @@ end
 
 class CatsController < ControllerBase
   def create
-    byebug
     @cat = Cat.new(params["cat"])
     if @cat.save
       flash["notice"] = "Flash-later notice: made a new cat"
