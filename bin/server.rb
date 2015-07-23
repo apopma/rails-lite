@@ -24,7 +24,7 @@ $statuses = [
 ]
 
 class Cat
-  attr_reader :name, :owner
+  attr_accessor :name, :owner
 
   def self.all
     @cat ||= []
@@ -90,7 +90,15 @@ class CatsController < ControllerBase
   end
 
   def show
+    byebug
     @cat = Cat.find(params[:name])
+
+    unless @cat
+      @cat = Cat.new
+      @cat.name = "nobody"
+      @cat.owner = "no one"
+    end
+
     render :show
   end
 end
