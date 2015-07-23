@@ -20,12 +20,7 @@ class Route
   # controller expects a params hash with which to create dynamic routes
   def run(req, res)
     match_data = pattern.match req.path
-    route_params = {}
-
-    match_data.names.each do |match_name|
-      route_params[match_name] = match_data[match_name]
-    end
-
+    route_params = Hash[match_data.names.zip(match_data.captures)]
     controller_class.new(req, res, route_params).invoke_action(action_name)
   end
 end
@@ -45,8 +40,6 @@ class Router
   # evaluate the proc in the context of the instance
   # for syntactic sugar :)
   def draw(&proc)
-    # blocks shaped like:
-    # method pattern controller_class action_name
     instance_eval(&proc)
   end
 
