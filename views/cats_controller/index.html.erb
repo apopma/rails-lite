@@ -3,7 +3,15 @@
 <% end %>
 
 <h1>ALL THE CATS</h1>
-<pre><%= @cats.to_s %></pre>
+
+<ul>
+  <% @cats.each do |cat| %>
+    <li>
+      <a href="cats/<%= cat.name %>"><%= cat.name %></a>
+    </li>
+  <% end %>
+</ul>
+
 <a href="/cats/new">New cat!</a>
 
 <hr>
