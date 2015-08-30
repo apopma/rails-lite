@@ -46,7 +46,7 @@ describe "the symphony of things" do
     let(:ctrlr) { Ctrlr.new(req, res) }
 
     it "exposes a session via the session method" do
-      expect(ctrlr.session).to be_instance_of(Phase4::Session)
+      expect(ctrlr.session).to be_instance_of(Session)
     end
 
     it "saves the session after rendering content" do
