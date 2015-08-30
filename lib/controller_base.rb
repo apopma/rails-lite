@@ -72,12 +72,12 @@ class ControllerBase
     flash.store(res)
   end
 
-  private
   # Helper method to alias @already_built_response
   def already_built_response?
     @already_built_response
   end
 
+  private
   def set_auth_token
     @auth_token = SecureRandom.urlsafe_base64(11)
     session["auth_token"] = auth_token
