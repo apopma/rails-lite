@@ -34,7 +34,7 @@ describe Route do
   end
 
   describe "#run" do
-    before(:all) { class DummyController; end }
+    before(:all) { class DummyController < ControllerBase; end }
     after(:all) { Object.send(:remove_const, "DummyController") }
 
     it "instantiates controller and invokes action" do
@@ -44,7 +44,7 @@ describe Route do
       allow(req).to receive(:path) { "/users" }
 
       dummy_controller_class = DummyController
-      dummy_controller_instance = DummyController.new
+      dummy_controller_instance = DummyController.new(req, res)
       allow(dummy_controller_instance).to receive(:invoke_action)
       allow(dummy_controller_class).to receive(:new).with(req, res, {}) do
         dummy_controller_instance
