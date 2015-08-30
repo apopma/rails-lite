@@ -1,4 +1,4 @@
-require 'associatable'
+require 'spec_helper'
 
 describe 'AssocOptions' do
   describe 'BelongsToOptions' do

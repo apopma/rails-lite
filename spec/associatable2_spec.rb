@@ -1,4 +1,4 @@
-require 'associatable'
+require "spec_helper"
 
 describe 'Associatable' do
   before(:each) { DBConnection.reset }
