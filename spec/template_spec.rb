@@ -3,9 +3,17 @@ require_relative '../lib/controller_base'
 
 describe ControllerBase do
   before(:all) do
+    class Cat < SQLObject
+      belongs_to(
+        :owner, class_name: "Human",
+        primary_key: :id, foreign_key: :owner_id
+      )
+      self.finalize!
+    end
+
     class CatsController < ControllerBase
       def index
-        @cats = ["GIZMO"]
+        @cats = Cat.all
       end
     end
   end
@@ -17,6 +25,7 @@ describe ControllerBase do
 
   describe "#render" do
     before(:each) do
+      cats_controller.index # actually set up the @cats ivar
       cats_controller.render(:index)
     end
 
@@ -34,11 +43,13 @@ describe ControllerBase do
       end
 
       it "is true after rendering content" do
+        cats_controller2.index
         cats_controller2.render(:index)
         expect(cats_controller2.already_built_response?).to be_truthy
       end
 
       it "raises an error when attempting to render twice" do
+        cats_controller2.index
         cats_controller2.render(:index)
         expect do
           cats_controller2.render(:index)

@@ -8,6 +8,7 @@ require 'securerandom'
 require_relative 'session'
 require_relative 'params'
 require_relative 'flash'
+
 class InvalidAuthenticityToken < RuntimeError; end;
 JUST_POST = ['post', 'POST', :post]
 
@@ -45,7 +46,6 @@ class ControllerBase
     dir_name = self.class.to_s.underscore
     template_file = File.read("views/#{dir_name}/#{template_name}.html.erb")
     set_auth_token
-
     template = ERB.new(template_file).result(binding) # eval needed later on?
     render_content(template, 'text/html')
   end
