@@ -5,7 +5,7 @@ A lightweight ORM + MVC framework inspired by Rails and ActiveRecord.
 - Clone this repo.
 - Run `ruby bin/server.rb` to start the server.
 - Navigate to `localhost:3000/cats`.
-- Define new routes at the end of `server.rb`, in the `router.draw` block. One route per line, four arguments in order: HTTP method, Regexp matching the desired URL pattern, controller name, action method to invoke as a symbol. Any groups defined in the regex will be parsed as route params and passed on to the controller. *i.e.* the ID found in a URL matching `/cats/(?<cat_id>\\d+)` is accessible through params[:cat_id] in the controller.
+- Define new routes at the end of `server.rb`, in the `router.draw` block. One route per line, four arguments in order: HTTP method, Regexp matching the desired URL pattern, controller name, action method to invoke as a symbol. Any groups defined in the regex will be parsed as route params and passed on to the controller. *i.e.* the ID found in a URL matching `/cats/(?<cat_id>\\d+)` is accessible through `params[:cat_id]` in the controller.
 - New models and controllers should be defined in `server.rb`. Models inherit from SQLObject; controllers from ControllerBase.
 - New views should be placed in `views/#{controller_name}_controller` and named according to the corresponding RESTful action which renders them. (index.html.erb, show.html.erb...)
 
