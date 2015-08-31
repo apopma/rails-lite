@@ -20,7 +20,7 @@ The base class for anything persisted to the database.
 Receives HTTP requests and routes them to the appropriate controller and action.
 - Auto-defines RESTful GET/POST/PUT/DELETE methods for a given controller class.
 - Each new Route stores a reference to its controller class and method name.
-- `Router#draw` supports Rails-like block syntax to define routes; see bin/server.rb.
+- `Router#draw` supports Rails-like block syntax to define routes.
 
 ### ControllerBase
 Receives HTTP requests from the router and renders the appropriate response.
